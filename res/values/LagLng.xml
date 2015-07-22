@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="zongjiao">
+        <item>综合教学楼</item>
+        <item>28.075188</item>
+        <item>113.015906</item>
+    </string-array>
+    <string-array name="zongshi">
+        <item>综合实验楼</item>
+        <item>28.075077</item>
+        <item>113.015277</item>
+    </string-array>
+    <string-array name="gongsan">
+        <item>工科三号楼</item>
+        <item>28.073491</item>
+        <item>113.01587</item>
+    </string-array>
+    <string-array name="gongsanb">
+        <item>工科三号楼-B区门</item>
+        <item>28.072694</item>
+        <item>113.014783</item>
+    </string-array>
+    <string-array name="gonger">
+        <item>工科二号楼</item>
+        <item>28.072264</item>
+        <item>113.016373</item>
+    </string-array>
+    <string-array name="gongyi">
+        <item>工科一号楼</item>
+        <item>28.070662</item>
+        <item>113.017415</item>
+    </string-array>
+    <string-array name="gongyib">
+        <item>工科一号楼-B区门</item>
+        <item>28.071005</item>
+        <item>113.01657</item>
+    </string-array>
+    <string-array name="tushuguan">
+        <item>图书馆</item>
+        <item>28.072973</item>
+        <item>113.017262</item>
+    </string-array>
+    <string-array name="likelou">
+        <item>理科楼</item>
+        <item name="latitude">28.069786</item>
+        <item name="longitude">113.017765</item>
+    </string-array>
+    <string-array name="likeloub">
+        <item>理科楼-B区门</item>
+        <item>28.070057</item>
+        <item>113.017055</item>
+    </string-array>
+    <string-array name="wenkelou">
+        <item>文科楼(ABC区)</item>
+        <item>28.070862</item>
+        <item>113.019472</item>
+    </string-array>
+    <string-array name="wenkeloud">
+        <item>文科楼(DE区)</item>
+        <item>28.070041</item>
+        <item>113.018978</item>
+    </string-array>
+    <string-array name="sheyilou">
+        <item>设艺楼</item>
+        <item>28.071674</item>
+        <item>113.019229</item>
+    </string-array>
+
+</resources>
