@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.search.core.RouteLine;
+import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.route.*;
 import csust.schoolnavi.impl.RoutePlanMgr;
 import csust.schoolnavi.interfaces.OnTaskDoneListener;
@@ -19,76 +21,88 @@ import java.util.Map;
 
 /**
  * Created by 7YHong on 2015/7/6.
- * Â·¾¶¹æ»®Activity
- * ÒªÇóÒµÎñÊµÏÖÀà·µ»ØList<XXRouteLine>¶ÔÏó
+ * è·¯å¾„è§„åˆ’Activity
+ * è¦æ±‚ä¸šåŠ¡å®ç°ç±»è¿”å›List<XXRouteLine>å¯¹è±¡
  */
-public class MyRoutePlanSearch extends Activity {
+public class MyRoutePlanSearch extends Activity implements OnTaskDoneListener {
     /**
-     * ¾²Ì¬±äÁ¿µÄ±àºÅ¸ù¾İActivity³öÏÖµÄË³Ğò½øĞĞ
+     * é™æ€å˜é‡çš„ç¼–å·æ ¹æ®Viewå‡ºç°çš„é¡ºåºè¿›è¡Œ
      */
-    public static final int SEARCH_WITHDISP=21;
-    public static final int SEARCH_WITHNODISP=20;
+    public static final int SEARCH_WITHNODISP = 20;
+    public static final int SEARCH_WITHDISP = 21;
 
-    EditText start,end;
-    List routeLines;//ÄÚº¬XXRouteLineÀàÔªËØ
+    PlanNode stNode, enNode;
+
+    EditText start, end;
+    List<RouteLine> routeLines;//å†…å«XXRouteLineç±»å…ƒç´ 
     RecyclerView rv;
     Context c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        c=getApplicationContext();
+        c = getApplicationContext();
         SDKInitializer.initialize(c);
         setContentView(R.layout.activity_routeplan);
-        start=(EditText)findViewById(R.id.start);
-        end=(EditText)findViewById(R.id.end);
+        start = (EditText) findViewById(R.id.start);
+        end = (EditText) findViewById(R.id.end);
         //lv=(ListView)findViewById(R.id.itemlist);
-        rv=(RecyclerView)findViewById(R.id.recyclerview);
-        LinearLayoutManager manager=new LinearLayoutManager(c);
+        rv = (RecyclerView) findViewById(R.id.recyclerview);
+        LinearLayoutManager manager = new LinearLayoutManager(c);
         manager.setOrientation(LinearLayoutManager.VERTICAL);
         rv.setLayoutManager(manager);
 
     }
 
-    public void SearchButtonProcess(View v) {
-        routeLines =null;
-        Log.i("TAG","Button Clicked!");
+    public void SearchBtnProgress(View v) {
+        Log.i("TAG", "Button Clicked!");
+        routeLines = null;
+        stNode = PlanNode.withCityNameAndPlaceName("åŒ—äº¬", start.getText().toString());
+        enNode = PlanNode.withCityNameAndPlaceName("åŒ—äº¬", end.getText().toString());
         switch (v.getId()) {
             case R.id.drive:
-                searchDriving();
+                RoutePlanMgr.get().SearchDriving(stNode, enNode, this);
+                break;
+            case R.id.walk:
+                RoutePlanMgr.get().SearchWalking(stNode, enNode, this);
+                break;
+            case R.id.transit:
+                RoutePlanMgr.get().SearchTransit(stNode, enNode, this);
                 break;
             default:
-                Toast.makeText(c, "°´Å¥ÏÖÔÚ»¹²»ÉúĞ§", Toast.LENGTH_SHORT).show();
+                Toast.makeText(c, "æŒ‰é’®ç°åœ¨è¿˜ä¸ç”Ÿæ•ˆ", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
 
-    public void BackToMap(View v){
-        Toast.makeText(c,"°´Å¥¹¤×÷Õı³£!",Toast.LENGTH_SHORT).show();
-        setResult(SEARCH_WITHDISP);
-        finish();
+    public void backToMap(View v) {
+        switch (v.getId()) {
+            case R.id.backtomap: {
+                if (routeLines == null) finish();
+                setResult(SEARCH_WITHDISP);
+                finish();
+            }
+            break;
+
+            default:
+                Log.i("BtnError", "UnCorrectBtnID");
+                break;
+        }
     }
 
-    private void searchDriving() {
-        PlanNode stNode=PlanNode.withCityNameAndPlaceName("±±¾©",start.getText().toString());
-        PlanNode enNode=PlanNode.withCityNameAndPlaceName("±±¾©",end.getText().toString());
-        RoutePlanMgr.get(c).SearchDriving(stNode, enNode, new OnTaskDoneListener() {
-            @Override
-            public void onTaskDone(Map result) {
-                routeLines =(List)result.get("result");
-                Log.i("OnTaskDone_SearchBack",String.valueOf(routeLines.size()));
-                rv.setAdapter(new MyAdapter(routeLines.get(0)));
-            }
-        });
-        //routeLines = RoutePlanMgr.get(c).SearchDriving(stNode,enNode);
-        //lv.setAdapter(new MyAdapter(routeLines.get(0)));
+
+    @Override
+    public void onTaskDone(Map result) {
+        routeLines = RoutePlanMgr.get().getSearchResult();
+        Log.i("OnTaskDone_SearchBack", String.valueOf(routeLines.size()));
+        rv.setAdapter(new MyAdapter(routeLines.get(0)));
     }
 
 
     /*private class MyAdapter extends BaseAdapter {
         DrivingRouteLine routeLine;
         MyAdapter(Object routeLine){
-            //´Ë´¦Ö±½Ó°ÑÌáÈ¡³öÀ´µÄ½á¹û×ª»»³ÉÁËDrivingRouteLineÀàĞÍ£¬ÒòÎªÀÁ
+            //æ­¤å¤„ç›´æ¥æŠŠæå–å‡ºæ¥çš„ç»“æœè½¬æ¢æˆäº†DrivingRouteLineç±»å‹ï¼Œå› ä¸ºæ‡’
             this.routeLine=(DrivingRouteLine)routeLine;
         }
 

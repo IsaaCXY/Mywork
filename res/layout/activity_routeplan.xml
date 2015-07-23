@@ -65,7 +65,7 @@
                 android:layout_marginRight="2dip"
                 android:layout_weight="1.0"
                 android:background="@drawable/button_style"
-                android:onClick="SearchButtonProcess"
+                android:onClick="SearchBtnProgress"
                 android:text="驾车搜索" />
 
         <Button
@@ -76,7 +76,7 @@
                 android:layout_marginRight="2dip"
                 android:layout_weight="1.0"
                 android:background="@drawable/button_style"
-                android:onClick="SearchButtonProcess"
+                android:onClick="SearchBtnProgress"
                 android:text="公交搜索" />
 
         <Button
@@ -87,7 +87,7 @@
                 android:layout_marginRight="2dip"
                 android:layout_weight="1.0"
                 android:background="@drawable/button_style"
-                android:onClick="SearchButtonProcess"
+                android:onClick="SearchBtnProgress"
                 android:text="步行搜索" />
     </LinearLayout>
     <Button
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/backtomap"
             android:text="在地图上查看"
-            android:onClick="BackToMap"/>
+            android:onClick="backToMap"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

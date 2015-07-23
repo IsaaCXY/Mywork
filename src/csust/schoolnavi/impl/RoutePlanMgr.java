@@ -3,108 +3,142 @@ package csust.schoolnavi.impl;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.route.*;
 import csust.schoolnavi.interfaces.OnTaskDoneListener;
-import csust.schoolnavi.interfaces.RoutePM_inter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by 7YHong on 2015/7/6.
+ * çœŸæ­£çš„æœç´¢è¯·æ±‚æ˜¯ç”±å®ƒå‘å‡ºçš„
+ * æœç´¢å¾—åˆ°çš„ç»“æœä¹Ÿæš‚å­˜åœ¨è¿™é‡Œ
+ * ç»“æœçš„ä¿å­˜æ ¼å¼ä¸ºä¿å­˜å®ƒçš„List<XXRouteLine>
  */
-public class RoutePlanMgr implements RoutePM_inter,OnGetRoutePlanResultListener {
+public class RoutePlanMgr implements csust.schoolnavi.interfaces.IRoutePlanMgr,OnGetRoutePlanResultListener {
     public static final int TYPE_DRIVING=1;
     public static final int TYPE_WALKING=2;
     public static final int TYPE_TRANSIT=3;
 
     private static RoutePlanMgr ourInstance = new RoutePlanMgr();
-    private static Context c;
+
+    List routelines;
+    int type;
+
     RoutePlanSearch mSearch;
-    Map<String,Object> searchResult;//List<XXRouteLine>¶ÔÏóÏòÉÏ×ªĞÍÎªObject    Í¬Ê±°üº¬Â·¾¶¹æ»®µÄ¸÷ÖÖĞÅÏ¢
+    //Map<String,Object> searchResult;//List<XXRouteLine>å¯¹è±¡å‘ä¸Šè½¬å‹ä¸ºObject    åŒæ—¶åŒ…å«è·¯å¾„è§„åˆ’çš„å„ç§ä¿¡æ¯
     OnTaskDoneListener listener;
 
     private RoutePlanMgr() {
         mSearch=RoutePlanSearch.newInstance();
         mSearch.setOnGetRoutePlanResultListener(this);
-        searchResult =new HashMap<String, Object>();
     }
 
-    public static RoutePlanMgr get(Context context){
-        c=context;
+    public static RoutePlanMgr get(){
         return ourInstance;
     }
 
     @Override
-    public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
-
+    public void onGetWalkingRouteResult(WalkingRouteResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            //Toast.makeText(c, "æŠ±æ­‰ï¼Œæœªæ‰¾åˆ°ç»“æœ", Toast.LENGTH_SHORT).show();
+        }
+        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+            //èµ·ç»ˆç‚¹æˆ–é€”ç»ç‚¹åœ°å€æœ‰å²ä¹‰ï¼Œé€šè¿‡ä»¥ä¸‹æ¥å£è·å–å»ºè®®æŸ¥è¯¢ä¿¡æ¯
+            return;
+        }
+        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
+            routelines=result.getRouteLines();
+            type=TYPE_WALKING;
+            listener.onTaskDone(null);
+        }
     }
 
     @Override
-    public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
-
+    public void onGetTransitRouteResult(TransitRouteResult result) {
+        if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+            //Toast.makeText(c, "æŠ±æ­‰ï¼Œæœªæ‰¾åˆ°ç»“æœ", Toast.LENGTH_SHORT).show();
+        }
+        if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+            //èµ·ç»ˆç‚¹æˆ–é€”ç»ç‚¹åœ°å€æœ‰å²ä¹‰ï¼Œé€šè¿‡ä»¥ä¸‹æ¥å£è·å–å»ºè®®æŸ¥è¯¢ä¿¡æ¯
+            return;
+        }
+        if (result.error == SearchResult.ERRORNO.NO_ERROR) {
+            routelines=result.getRouteLines();
+            type=TYPE_TRANSIT;
+            listener.onTaskDone(null);
+        }
     }
 
     /**
      *
      * @param result List<DrivingRouteLine>
-     * Èç¹ûËÑË÷½á¹ûÓĞ´íÎó£¬ÔòÔÚÒ³Ãæ½øĞĞÌáÊ¾¶ø²»½øĞĞ»Øµ÷
-     * Ö»ÓĞµ±½á¹ûÕıÈ·£¬²Å½«½á¹û·ÅÈë²¢½øĞĞ»Øµ÷
+     * å¦‚æœæœç´¢ç»“æœæœ‰é”™è¯¯ï¼Œåˆ™åœ¨é¡µé¢è¿›è¡Œæç¤ºè€Œä¸è¿›è¡Œå›è°ƒ
+     * åªæœ‰å½“ç»“æœæ­£ç¡®ï¼Œæ‰å°†ç»“æœæ”¾å…¥å¹¶è¿›è¡Œå›è°ƒ
      */
     @Override
     public void onGetDrivingRouteResult(DrivingRouteResult result) {
         if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-            Toast.makeText(c, "±§Ç¸£¬Î´ÕÒµ½½á¹û", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(c, "æŠ±æ­‰ï¼Œæœªæ‰¾åˆ°ç»“æœ", Toast.LENGTH_SHORT).show();
         }
         if (result.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
-            //ÆğÖÕµã»òÍ¾¾­µãµØÖ·ÓĞáªÒå£¬Í¨¹ıÒÔÏÂ½Ó¿Ú»ñÈ¡½¨Òé²éÑ¯ĞÅÏ¢
-            //result.getSuggestAddrInfo()
-            Toast.makeText(c, "ÇëÈ·±£ÊäÈëµÄµØµãÃ»ÓĞÆçÒå!", Toast.LENGTH_SHORT).show();
+            //èµ·ç»ˆç‚¹æˆ–é€”ç»ç‚¹åœ°å€æœ‰å²ä¹‰ï¼Œé€šè¿‡ä»¥ä¸‹æ¥å£è·å–å»ºè®®æŸ¥è¯¢ä¿¡æ¯
             return;
         }
         if (result.error == SearchResult.ERRORNO.NO_ERROR) {
-            //´Ë´¦ÔÚMapÖĞ·ÅÁËÒ»¸öList<DrivingRouteLine>
-            searchResult.put("type",TYPE_DRIVING);
-            searchResult.put("result",result.getRouteLines());
-            listener.onTaskDone(searchResult);
+            routelines=result.getRouteLines();
+            type=TYPE_DRIVING;
+            listener.onTaskDone(null);
         }
         Log.i("RoutePlanManager","GetDrivingRouteResult ed!");
     }
+
 
     /**
      *
      * @param stNode
      * @param enNode
-     * @param listener »Øµ÷½Ó¿Ú½«·µ»ØList<XXRouteLine>ÀàĞÍµÄObject
+     * @param listener å›è°ƒæ¥å£å°†è¿”å›List<XXRouteLine>ç±»å‹çš„Object
      *
      */
     @Override
     public void SearchDriving(PlanNode stNode, PlanNode enNode, OnTaskDoneListener listener) {
+        routelines=null;    //æœç´¢ä¹‹å‰å…ˆæ¸…ç©ºä¸€ä¸‹
         this.listener=listener;
         mSearch.drivingSearch((new DrivingRoutePlanOption())
                 .from(stNode)
                 .to(enNode));
-        //Log.i("RoutePlanManager","·µ»Ø¿ÕÖµ");
-        //if(result==null) Toast.makeText(c,"·µ»Ø¿ÕÖµ",Toast.LENGTH_SHORT).show();
-
-        //return ((DrivingRouteResult)result).getSearchResult();
     }
 
     @Override
-    public List<TransitRouteLine> SearchTransit(PlanNode stNode, PlanNode enNode) {
-        return null;
+    public void SearchWalking(PlanNode stNode, PlanNode enNode, OnTaskDoneListener listener) {
+        routelines=null;    //æœç´¢ä¹‹å‰å…ˆæ¸…ç©ºä¸€ä¸‹
+        this.listener=listener;
+        mSearch.walkingSearch((new WalkingRoutePlanOption())
+                .from(stNode)
+                .to(enNode));
     }
 
     @Override
-    public List<WalkingRouteLine> SearchWalking(PlanNode stNode, PlanNode enNode) {
-        return null;
+    public void SearchTransit(PlanNode stNode, PlanNode enNode, OnTaskDoneListener listener) {
+        routelines=null;    //æœç´¢ä¹‹å‰å…ˆæ¸…ç©ºä¸€ä¸‹
+        this.listener=listener;
+        mSearch.transitSearch((new TransitRoutePlanOption())
+                .from(stNode)
+                .city("åŒ—äº¬")
+                .to(enNode));
+    }
+
+
+    @Override
+    public List<RouteLine> getSearchResult() {
+        return routelines;
     }
 
     @Override
-    public Map getSearchResult() {
-        return searchResult;
+    public int getType() {
+        return type;
     }
 
 }

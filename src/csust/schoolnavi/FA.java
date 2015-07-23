@@ -8,7 +8,7 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 
 public class FA extends FragmentActivity {
-    // 定位消息跟随主Activity活动
+    // ??位?????????Activity??
     LocationClient mLocClient;
     private boolean isFirstLoc=true;
     MyLocationListener mLocListener;
@@ -26,18 +26,18 @@ public class FA extends FragmentActivity {
 
 
         /**
-         * 开始获取定位数据
+         * ????????位????
 
         //mBaiduMap.setMyLocationEnabled(true);
         //Maps.getInstance().getMap().setMyLocationEnabled(true);
         ((Maps)getApplication()).getMap().setMyLocationEnabled(true);
-        // 定位初始化
+        // ??位?????
         mLocListener=new MyLocationListener();
         mLocClient = new LocationClient(this);
         mLocClient.registerLocationListener(mLocListener);
         LocationClientOption option = new LocationClientOption();
-        option.setOpenGps(true);// 打开gps
-        option.setCoorType("bd09ll"); // 设置坐标类型
+        option.setOpenGps(true);// ??gps
+        option.setCoorType("bd09ll"); // ????????????
         option.setScanSpan(1000);
         mLocClient.setLocOption(option);
         mLocClient.start();*/
@@ -48,7 +48,7 @@ public class FA extends FragmentActivity {
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        // 定位消息跟随主Activity活动
+        // ??位?????????Activity??
         mLocClient.stop();
     }
 
@@ -56,12 +56,12 @@ public class FA extends FragmentActivity {
 
         @Override
         public void onReceiveLocation(BDLocation location) {
-            // mapfrag view 销毁后不在处理新接收的位置
+            // mapfrag view ????????????????位??
             /*if (location == null)
                 return;
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
-                            // 此处设置开发者获取到的方向信息，顺时针0-360
+                            // ??????????????????????????????0-360
                     .direction(100).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             ((Maps)getApplication()).getMap().setMyLocationData(locData);

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
-    <file url="PROJECT" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/FA.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/MainActivity.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/MyRoutePlanSearch.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/fragment/MyMapFragment.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/impl/RoutePlanMgr.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/interfaces/IMapFrag.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/model/SearchResult.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/csust/schoolnavi/present/MapPresent.java" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

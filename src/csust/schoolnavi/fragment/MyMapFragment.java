@@ -16,20 +16,23 @@ import com.baidu.mapapi.map.*;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.overlayutil.DrivingRouteOverlay;
 import com.baidu.mapapi.overlayutil.OverlayManager;
+import com.baidu.mapapi.overlayutil.TransitRouteOverlay;
+import com.baidu.mapapi.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
+import com.baidu.mapapi.search.route.TransitRouteLine;
+import com.baidu.mapapi.search.route.WalkingRouteLine;
 import csust.schoolnavi.MyRoutePlanSearch;
 import csust.schoolnavi.R;
 import csust.schoolnavi.impl.RoutePlanMgr;
-
-import java.util.List;
-import java.util.Map;
+import csust.schoolnavi.interfaces.IMapFrag;
+import csust.schoolnavi.present.MapPresent;
 
 /**
  * Created by 7YHong on 2015/7/5.
  */
-public class MyMapFragment extends Fragment {
-    public final int MAIN_SEARCHROUTE = 1;
+public class MyMapFragment extends Fragment implements IMapFrag {
+    public final int MAP_SEARCHROUTE = 11;
 
     private MapView bmap;
     private BaiduMap map;
@@ -38,44 +41,43 @@ public class MyMapFragment extends Fragment {
     private MyLocationListener mLocListener;
     private LocationMode mLocMode;
 
+    MapPresent present;
+
     private RouteLine route;
     OverlayManager routeOverlay;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        present = new MapPresent(this);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        MapStatus ms = new MapStatus.Builder().overlook(-20).zoom(15).build();
+        MapStatus ms = new MapStatus.Builder().overlook(-20).zoom(16).build();
         BaiduMapOptions bo = new BaiduMapOptions().mapStatus(ms)
-                .compassEnabled(false).zoomControlsEnabled(true);
+                .compassEnabled(true).zoomControlsEnabled(true);
         bmap = new MapView(getActivity(), bo);
         map = bmap.getMap();
-        //ÉèÖÃÎ»ÖÃÉè¶¨
+        //è®¾ç½®ä½ç½®è®¾å®š
         mLocMode = LocationMode.NORMAL;
         map.setMyLocationConfigeration(new MyLocationConfiguration(mLocMode, true, null));
-        //Æô¶¯Ò»¸öActivity
-        //startActivityForResult(new Intent(getActivity(), MyRoutePlanSearch.class),50);
-        /**
-         * ¿ªÊ¼»ñÈ¡¶¨Î»Êı¾İ
-         */
         map.setMyLocationEnabled(true);
-        // ¶¨Î»³õÊ¼»¯
+        // å®šä½åˆå§‹åŒ–
         mLocListener = new MyLocationListener();
         mLocClient = new LocationClient(getActivity());
         mLocClient.registerLocationListener(mLocListener);
         LocationClientOption option = new LocationClientOption();
-        //option.setOpenGps(true);// ´ò¿ªgps
-        option.setCoorType("bd09ll"); // ÉèÖÃ×ø±êÀàĞÍ
-        option.setScanSpan(5000);
+        //option.setOpenGps(true);// æ‰“å¼€gps
+        option.setCoorType("bd09ll"); // è®¾ç½®åæ ‡ç±»å‹
+        option.setScanSpan(5000);       //è·å–ä½ç½®çš„é—´éš”æ—¶é—´
         option.setNeedDeviceDirect(true);
         mLocClient.setLocOption(option);
         mLocClient.start();
         return bmap;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -87,13 +89,13 @@ public class MyMapFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.map_searchroute: {
-                Toast.makeText(getActivity(), "·¢ÆğÂ·¾¶¹æ»®!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "å‘èµ·è·¯å¾„è§„åˆ’!", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(getActivity(), MyRoutePlanSearch.class);
-                startActivityForResult(i, MAIN_SEARCHROUTE);
+                startActivityForResult(i, MAP_SEARCHROUTE);
             }
             break;
             default:
-                Toast.makeText(getActivity(), "ÔİÎ´°ó¶¨ÊÂ¼ş", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "æš‚æœªç»‘å®šäº‹ä»¶", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -119,17 +121,54 @@ public class MyMapFragment extends Fragment {
         mLocClient.stop();
     }
 
+    @Override
+    public void addRoute(DrivingRouteLine route) {
+        DrivingRouteOverlay overlay = new DrivingRouteOverlay(map);
+        routeOverlay = overlay;
+        map.setOnMarkerClickListener(overlay);
+        overlay.setData(route);
+        overlay.addToMap();
+        overlay.zoomToSpan();
+    }
+
+    @Override
+    public void addRoute(WalkingRouteLine route) {
+        WalkingRouteOverlay overlay = new WalkingRouteOverlay(map);
+        routeOverlay = overlay;
+        map.setOnMarkerClickListener(overlay);
+        overlay.setData(route);
+        overlay.addToMap();
+        overlay.zoomToSpan();
+    }
+
+    @Override
+    public void addRoute(TransitRouteLine route) {
+        TransitRouteOverlay overlay = new TransitRouteOverlay(map);
+        routeOverlay = overlay;
+        map.setOnMarkerClickListener(overlay);
+        overlay.setData(route);
+        overlay.addToMap();
+        overlay.zoomToSpan();
+
+    }
+
+
+    @Override
+    public void clear() {
+        map.clear();
+    }
+
 
     class MyLocationListener implements BDLocationListener {
 
         @Override
         public void onReceiveLocation(BDLocation location) {
-            // mapfrag view Ïú»Ùºó²»ÔÚ´¦ÀíĞÂ½ÓÊÕµÄÎ»ÖÃ
+            // mapfrag view é”€æ¯åä¸åœ¨å¤„ç†æ–°æ¥æ”¶çš„ä½ç½®
             if (location == null || map == null)
                 return;
             MyLocationData locData = new MyLocationData.Builder()
                     .accuracy(location.getRadius())
-                            // ´Ë´¦ÉèÖÃ¿ª·¢Õß»ñÈ¡µ½µÄ·½ÏòĞÅÏ¢£¬Ë³Ê±Õë0-360
+                            // æ­¤å¤„è®¾ç½®å¼€å‘è€…è·å–åˆ°çš„æ–¹å‘ä¿¡æ¯ï¼Œé¡ºæ—¶é’ˆ0-360
                     .direction(100).latitude(location.getLatitude())
                     .longitude(location.getLongitude()).build();
             map.setMyLocationData(locData);
@@ -149,26 +188,10 @@ public class MyMapFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.i("TAG","act result 1");
-        if (requestCode != MAIN_SEARCHROUTE) return;
+        if (requestCode != MAP_SEARCHROUTE) return;
         Log.i("TAG","act result 2");
         if (resultCode != MyRoutePlanSearch.SEARCH_WITHDISP) return;
-        Log.i("TAG","act result 3");
-        Map searchResult=(Map)RoutePlanMgr.get(getActivity()).getSearchResult();
-        List routeLines=(List)searchResult.get("result");
-        int type=(Integer)searchResult.get("type");
-        route=(RouteLine)routeLines.get(0);
-        if (route == null) return;
-        Log.i("TAG","act result 4");
-        if (route instanceof DrivingRouteLine) {
-            Log.i("TAG","act result 5");
-            DrivingRouteOverlay overlay = new DrivingRouteOverlay(map);
-            routeOverlay = overlay;
-            map.setOnMarkerClickListener(overlay);
-            overlay.setData((DrivingRouteLine) route);
-            overlay.addToMap();
-            overlay.zoomToSpan();
-        }
-
-
+        Log.i("TAG", "act result 3");
+        present.dispCurrentOverlay();
     }
 }
