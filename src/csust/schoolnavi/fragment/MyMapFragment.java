@@ -4,15 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMapOptions;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
-import com.baidu.mapapi.map.*;
+import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.overlayutil.DrivingRouteOverlay;
 import com.baidu.mapapi.overlayutil.OverlayManager;
@@ -22,9 +34,9 @@ import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.TransitRouteLine;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
+
 import csust.schoolnavi.MyRoutePlanSearch;
 import csust.schoolnavi.R;
-import csust.schoolnavi.impl.RoutePlanMgr;
 import csust.schoolnavi.interfaces.IMapFrag;
 import csust.schoolnavi.present.MapPresent;
 
@@ -60,16 +72,18 @@ public class MyMapFragment extends Fragment implements IMapFrag {
                 .compassEnabled(true).zoomControlsEnabled(true);
         bmap = new MapView(getActivity(), bo);
         map = bmap.getMap();
+
         //设置位置设定
         mLocMode = LocationMode.NORMAL;
         map.setMyLocationConfigeration(new MyLocationConfiguration(mLocMode, true, null));
         map.setMyLocationEnabled(true);
+
         // 定位初始化
         mLocListener = new MyLocationListener();
         mLocClient = new LocationClient(getActivity());
         mLocClient.registerLocationListener(mLocListener);
         LocationClientOption option = new LocationClientOption();
-        //option.setOpenGps(true);// 打开gps
+        //option.setOpenGps(true);   // 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
         option.setScanSpan(5000);       //获取位置的间隔时间
         option.setNeedDeviceDirect(true);
