@@ -3,13 +3,13 @@ package csust.schoolnavi;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
+
 import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.*;
-import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMapOptions;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapView;
+
 import csust.schoolnavi.fragment.MyMapFragment;
 
 /**
@@ -30,6 +30,7 @@ public class MainActivity extends FragmentActivity {
         mapfrag = new MyMapFragment();
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction().add(R.id.map, mapfrag, "map_fragment").commit();
+        //fdsafdsafdsa
 
 
 
