@@ -37,21 +37,25 @@ import com.baidu.mapapi.search.route.WalkingRouteLine;
 
 import csust.schoolnavi.MyRoutePlanSearch;
 import csust.schoolnavi.R;
+import csust.schoolnavi.impl.MyOrientationListener;
 import csust.schoolnavi.interfaces.IMapFrag;
 import csust.schoolnavi.present.MapPresent;
 
-/**
- * Created by 7YHong on 2015/7/5.
- */
+
 public class MyMapFragment extends Fragment implements IMapFrag {
     public final int MAP_SEARCHROUTE = 11;
 
+    public String addr;
+    private double mlatitude, mlongtitude;
     private MapView bmap;
     private BaiduMap map;
     private boolean isFirstLoc = true;
     private LocationClient mLocClient;
     private MyLocationListener mLocListener;
     private LocationMode mLocMode;
+    private MyOrientationListener myOrientationListener;//传感器监听
+    int directionx;
+    boolean sub = false;
 
     MapPresent present;
 
@@ -73,6 +77,9 @@ public class MyMapFragment extends Fragment implements IMapFrag {
         bmap = new MapView(getActivity(), bo);
         map = bmap.getMap();
 
+        //初始化传感器
+        initOrientationListener();
+
         //设置位置设定
         mLocMode = LocationMode.NORMAL;
         map.setMyLocationConfigeration(new MyLocationConfiguration(mLocMode, true, null));
@@ -85,10 +92,11 @@ public class MyMapFragment extends Fragment implements IMapFrag {
         LocationClientOption option = new LocationClientOption();
         //option.setOpenGps(true);   // 打开gps
         option.setCoorType("bd09ll"); // 设置坐标类型
-        option.setScanSpan(5000);       //获取位置的间隔时间
+        option.setScanSpan(1000);       //获取位置的间隔时间
         option.setNeedDeviceDirect(true);
         mLocClient.setLocOption(option);
         mLocClient.start();
+
         return bmap;
     }
 
@@ -101,6 +109,7 @@ public class MyMapFragment extends Fragment implements IMapFrag {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.map_searchroute: {
                 Toast.makeText(getActivity(), "发起路径规划!", Toast.LENGTH_SHORT).show();
@@ -108,11 +117,43 @@ public class MyMapFragment extends Fragment implements IMapFrag {
                 startActivityForResult(i, MAP_SEARCHROUTE);
             }
             break;
+
+            case R.id.map_loc:
+                LatLng ll = new LatLng(mlatitude, mlongtitude);
+                MapStatusUpdate msu = MapStatusUpdateFactory.newLatLng(ll);
+                Toast.makeText(getActivity(), addr, Toast.LENGTH_SHORT).show();
+                map.animateMapStatus(msu);
+                break;
+
+            //定位模式改变
+            case R.id.map_follow:
+                if (!sub) {
+                    mLocMode = LocationMode.COMPASS;
+                    map.setMyLocationConfigeration(new MyLocationConfiguration(mLocMode,
+                            true, null));
+                    sub = true;
+                    item.setTitle("正常模式");
+                    break;
+                }
+                mLocMode = LocationMode.NORMAL;
+                map.setMyLocationConfigeration(new MyLocationConfiguration(mLocMode, true, null));
+                item.setTitle("罗盘模式");
+                sub = false;
+                break;
+
             default:
                 Toast.makeText(getActivity(), "暂未绑定事件", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        map.setMyLocationEnabled(true);
+        mLocClient.start();
+        myOrientationListener.start();
+        super.onStart();
     }
 
     @Override
@@ -129,10 +170,11 @@ public class MyMapFragment extends Fragment implements IMapFrag {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         map.setMyLocationEnabled(false);
         bmap.onDestroy();
         mLocClient.stop();
+        myOrientationListener.stop();
+        super.onDestroy();
     }
 
     @Override
@@ -173,37 +215,57 @@ public class MyMapFragment extends Fragment implements IMapFrag {
     }
 
 
+    /*
+    * 初始化传感器*/
+    private void initOrientationListener() {
+
+        myOrientationListener = new MyOrientationListener(getActivity());
+        myOrientationListener.setOnOrientationListener(new MyOrientationListener.OnOrientationListener() {
+            @Override
+            public void onOrientationChanged(float x) {
+
+                directionx = (int) x;
+            }
+        });
+    }
+
     class MyLocationListener implements BDLocationListener {
 
         @Override
         public void onReceiveLocation(BDLocation location) {
+
             // mapfrag view 销毁后不在处理新接收的位置
             if (location == null || map == null)
                 return;
             MyLocationData locData = new MyLocationData.Builder()
-                    .accuracy(location.getRadius())
-                            // 此处设置开发者获取到的方向信息，顺时针0-360
-                    .direction(100).latitude(location.getLatitude())
-                    .longitude(location.getLongitude()).build();
+                    .accuracy(location.getRadius())// 此处设置开发者获取到的方向信息，顺时针0-360
+                    .direction(directionx)
+                    .latitude(location.getLatitude())
+                    .longitude(location.getLongitude())
+                    .build();
+            mlatitude = location.getLatitude();
+            mlongtitude = location.getLongitude();
+            addr = "定位到:" + location.getAddrStr();
             map.setMyLocationData(locData);
+
             if (isFirstLoc) {
                 isFirstLoc = false;
                 LatLng ll = new LatLng(location.getLatitude(),
                         location.getLongitude());
                 MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
+                Toast.makeText(getActivity(), addr, Toast.LENGTH_SHORT).show();
                 map.animateMapStatus(u);
             }
         }
-
     }
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("TAG","act result 1");
+        Log.i("TAG", "act result 1");
         if (requestCode != MAP_SEARCHROUTE) return;
-        Log.i("TAG","act result 2");
+        Log.i("TAG", "act result 2");
         if (resultCode != MyRoutePlanSearch.SEARCH_WITHDISP) return;
         Log.i("TAG", "act result 3");
         present.dispCurrentOverlay();

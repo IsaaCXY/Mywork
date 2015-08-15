@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/map_searchroute"
-          android:showAsAction="never"
-          android:title="路径规划"/>
+    <item
+        android:id="@+id/map_searchroute"
+        android:showAsAction="never"
+        android:title="路径规划" />
     <item
         android:id="@+id/map_common"
         android:showAsAction="never"
-        android:title="普通地图"/>
+        android:title="普通地图" />
     <item
         android:id="@+id/map_site"
         android:showAsAction="never"
-        android:title="卫星地图"/>
+        android:title="卫星地图" />
     <item
         android:id="@+id/map_traffic"
         android:showAsAction="never"
-        android:title="实时交通（off)"/>
-    
-    <item android:id="@+id/map_loc"
+        android:title="实时交通（off)" />
+
+    <item
+        android:id="@+id/map_loc"
         android:showAsAction="never"
-        android:title="定位"/>
+        android:title="定位" />
+    <item
+        android:id="@+id/map_follow"
+        android:showAsAction="never"
+        android:title="跟随模式" />
 
 </menu>

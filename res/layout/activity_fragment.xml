@@ -20,13 +20,23 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Clear" />
+                android:text="Clear"
+            android:layout_marginLeft="8dp"/>
+        <Button
+            android:id="@+id/locate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Locate"
+            android:layout_weight="1"
+            android:layout_marginLeft="8dp"/>
         <Button
                 android:id="@+id/func"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Reset" />
+                android:text="Reset"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"/>
     </LinearLayout>
 
 </LinearLayout>

@@ -1,104 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="起点：" />
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="起点：" />
 
         <EditText
-                android:id="@+id/start"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:text="龙泽" >
+            android:id="@+id/start"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="龙泽">
 
             <requestFocus />
         </EditText>
     </LinearLayout>
 
-    <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="终点：" />
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="终点：" />
 
         <EditText
-                android:id="@+id/end"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:text="西单" >
+            android:id="@+id/end"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="西单">
 
             <requestFocus />
         </EditText>
     </LinearLayout>
 
-    <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:layout_marginTop="5dip"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/drive"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dip"
-            android:layout_marginTop="5dip"
-            android:orientation="horizontal" >
+            android:layout_height="fill_parent"
+            android:layout_margin="8dp"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="1.0"
+            android:background="@drawable/button_style"
+            android:onClick="SearchBtnProgress"
+            android:text="驾车搜索"
+            android:textColor="#000" />
 
         <Button
-                android:id="@+id/drive"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="2dip"
-                android:layout_marginRight="2dip"
-                android:layout_weight="1.0"
-                android:background="@drawable/button_style"
-                android:onClick="SearchBtnProgress"
-                android:text="驾车搜索" />
+            android:id="@+id/transit"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="8dp"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="1.0"
+            android:background="@drawable/button_style"
+            android:onClick="SearchBtnProgress"
+            android:text="公交搜索"
+            android:textColor="#000" />
 
         <Button
-                android:id="@+id/transit"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="2dip"
-                android:layout_marginRight="2dip"
-                android:layout_weight="1.0"
-                android:background="@drawable/button_style"
-                android:onClick="SearchBtnProgress"
-                android:text="公交搜索" />
-
-        <Button
-                android:id="@+id/walk"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_marginLeft="2dip"
-                android:layout_marginRight="2dip"
-                android:layout_weight="1.0"
-                android:background="@drawable/button_style"
-                android:onClick="SearchBtnProgress"
-                android:text="步行搜索" />
+            android:id="@+id/walk"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="8dp"
+            android:layout_marginLeft="2dip"
+            android:layout_marginRight="2dip"
+            android:layout_weight="1.0"
+            android:background="@drawable/button_style"
+            android:onClick="SearchBtnProgress"
+            android:text="步行搜索"
+            android:textColor="#000" />
     </LinearLayout>
+
     <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/backtomap"
-            android:text="在地图上查看"
-            android:onClick="backToMap"/>
-    <android.support.v7.widget.RecyclerView
+        android:id="@+id/backtomap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/recyclerview"/>
+        android:layout_margin="8dp"
+        android:onClick="backToMap"
+        android:text="在地图上查看" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
